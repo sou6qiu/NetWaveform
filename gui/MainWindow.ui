@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>764</width>
-    <height>838</height>
+    <height>848</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -100,7 +100,11 @@
            </widget>
           </item>
           <item row="3" column="0" colspan="2">
-           <widget class="QComboBox" name="ip_box"/>
+           <widget class="QComboBox" name="ip_box">
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="4" column="0" colspan="2">
            <widget class="QLabel" name="port_label">
@@ -159,7 +163,7 @@
          <property name="minimumSize">
           <size>
            <width>150</width>
-           <height>450</height>
+           <height>500</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -441,7 +445,7 @@
             </item>
             <item row="0" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -460,7 +464,7 @@
             </item>
             <item row="1" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -479,7 +483,7 @@
             </item>
             <item row="2" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -498,7 +502,7 @@
             </item>
             <item row="3" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -517,7 +521,7 @@
             </item>
             <item row="4" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -536,7 +540,7 @@
             </item>
             <item row="5" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -555,7 +559,7 @@
             </item>
             <item row="6" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -574,7 +578,7 @@
             </item>
             <item row="7" column="1">
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
              <property name="textAlignment">
               <set>AlignCenter</set>
@@ -781,6 +785,75 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
+               <widget class="QLabel" name="pack_label">
+                <property name="minimumSize">
+                 <size>
+                  <width>40</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>40</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>包数：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="pack_num">
+                <property name="minimumSize">
+                 <size>
+                  <width>40</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>40</width>
+                  <height>21</height>
+                 </size>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+                <property name="buttonSymbols">
+                 <enum>QAbstractSpinBox::NoButtons</enum>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>1000</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line">
+                <property name="windowModality">
+                 <enum>Qt::ApplicationModal</enum>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>10</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>30</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QLabel" name="label_2">
                 <property name="minimumSize">
                  <size>
@@ -796,6 +869,9 @@
                 </property>
                 <property name="text">
                  <string>客户端：</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>

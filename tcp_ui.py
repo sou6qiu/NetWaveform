@@ -20,6 +20,7 @@ class Tcp_Ui(Ui_MainWindow):
     signal_status_removed = Signal(str)
     signal_add_clientstatus_info = Signal(str)
     signal_messagebox_info = Signal(str)
+    signal_clear_recv = Signal(str)
 
     def __init__(self):
         print('TCP_UI is running...')
@@ -33,6 +34,7 @@ class Tcp_Ui(Ui_MainWindow):
         self.tx_count = 0
         # statusbar End
         self.tail_ok = False
+
     #
     # # QChart 相关初始化
     # def init_chart(self):
@@ -124,6 +126,11 @@ class Tcp_Ui(Ui_MainWindow):
         self.signal_status_removed.connect(self.statusbar_remove)
         self.signal_add_clientstatus_info.connect(self.add_clientstatus_plain)
         self.signal_messagebox_info.connect(self.messagebox_info)
+        self.signal_clear_recv.connect(self.clear_recv)
+
+    def clear_recv(self, msg):
+        print(msg)
+        self.recv_data_text.clear()
 
     def write_msg(self, msg):
         # signal_write_msg信号会触发这个函数
@@ -242,14 +249,12 @@ class Tcp_Ui(Ui_MainWindow):
         """
         if self.recv_hex_radio.isChecked():
             msg = binascii.b2a_hex(pre_msg).decode('utf-8')
-            print(msg, type(msg), len(msg))  # msg为 str 类型
             msg = self.hex_show(msg)  # 将解码后的16进制数据按照两个字符+'空字符'发送到接收框中显示
             self.signal_write_msg.emit(msg)
         else:
             try:
                 # 尝试对接收到的数据解码，如果解码成功，即使解码后的数据是ascii可显示字符也直接发送，
                 msg = pre_msg.decode('utf-8')
-                print(msg)
                 self.signal_write_msg.emit(msg)
             except Exception as ret:
                 # 如果出现解码错误，提示用户选中16进制显示

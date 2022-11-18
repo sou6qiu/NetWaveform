@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'MainWindowbXKNnQ.ui'
+## Form generated from reading UI file 'MainWindowTtfaiM.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.2.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCharts import QChartView, QValueAxis, QSplineSeries, QChart, QLineSeries
+from PySide6.QtCharts import QChartView, QValueAxis, QLineSeries, QChart
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(764, 838)
+        MainWindow.resize(764, 848)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
@@ -67,6 +67,7 @@ class Ui_MainWindow(object):
 
         self.ip_box = QComboBox(self.groupBox)
         self.ip_box.setObjectName(u"ip_box")
+        self.ip_box.setEditable(True)
 
         self.gridLayout_3.addWidget(self.ip_box, 3, 0, 1, 2)
 
@@ -101,7 +102,7 @@ class Ui_MainWindow(object):
 
         self.groupBox_2 = QGroupBox(self.frame)
         self.groupBox_2.setObjectName(u"groupBox_2")
-        self.groupBox_2.setMinimumSize(QSize(150, 450))
+        self.groupBox_2.setMinimumSize(QSize(150, 500))
         self.groupBox_2.setMaximumSize(QSize(150, 16777215))
         self.gridLayout = QGridLayout(self.groupBox_2)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -380,10 +381,39 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.pack_label = QLabel(self.groupBox_4)
+        self.pack_label.setObjectName(u"pack_label")
+        self.pack_label.setMinimumSize(QSize(40, 21))
+        self.pack_label.setMaximumSize(QSize(40, 21))
+
+        self.horizontalLayout_3.addWidget(self.pack_label)
+
+        self.pack_num = QSpinBox(self.groupBox_4)
+        self.pack_num.setObjectName(u"pack_num")
+        self.pack_num.setMinimumSize(QSize(40, 21))
+        self.pack_num.setMaximumSize(QSize(40, 21))
+        self.pack_num.setAlignment(Qt.AlignCenter)
+        self.pack_num.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.pack_num.setMinimum(1)
+        self.pack_num.setMaximum(1000)
+
+        self.horizontalLayout_3.addWidget(self.pack_num)
+
+        self.line = QFrame(self.groupBox_4)
+        self.line.setObjectName(u"line")
+        self.line.setWindowModality(Qt.ApplicationModal)
+        self.line.setMinimumSize(QSize(10, 0))
+        self.line.setMaximumSize(QSize(30, 16777215))
+        self.line.setFrameShape(QFrame.VLine)
+        self.line.setFrameShadow(QFrame.Sunken)
+
+        self.horizontalLayout_3.addWidget(self.line)
+
         self.label_2 = QLabel(self.groupBox_4)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setMinimumSize(QSize(50, 20))
         self.label_2.setMaximumSize(QSize(50, 20))
+        self.label_2.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
         self.horizontalLayout_3.addWidget(self.label_2)
 
@@ -508,6 +538,7 @@ class Ui_MainWindow(object):
         self.send_loop.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u53d1\u9001", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"ms", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"\u6570\u636e\u63a5\u6536", None))
+        self.pack_label.setText(QCoreApplication.translate("MainWindow", u"\u5305\u6570\uff1a", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u5ba2\u6237\u7aef\uff1a", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"\u6570\u636e\u53d1\u9001", None))
         self.send_button.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001", None))
@@ -528,7 +559,7 @@ class Ui_MainWindow(object):
         self.recv_data_chartview.setChart(self.chart)
         self.chart.setTitle("AD多通道波形显示")
         self.axisX = QValueAxis()
-        self.axisX.setRange(0, 160)  # 设置坐标轴范围
+        self.axisX.setRange(0, 160)  # 设置坐标轴初始范围
         self.axisX.setLabelFormat("%d")  # 标签格式
         self.axisX.setTickCount(5)  # 主分隔个数
         # axisX.setMinorTickCount(4)

@@ -49,8 +49,8 @@ class MainWindow(QMainWindow, Tcp, Tcp_Ui, Ui_MainWindow):
         self.show_mode_change()
         self.recv_log_checkbox.stateChanged.connect(self.show_mode_change)
         self.recv_waveform_checkbox.stateChanged.connect(self.show_mode_change)
-        # 关闭socket
-        self.close_port_button.clicked.connect(self.close_btn_setup)
+        # # 关闭socket
+        # self.close_port_button.clicked.connect(self.close_btn_setup)
         # 清空接收区显示
         self.recv_clear_button.clicked.connect(self.recv_dataclear)
         # 设置发送按钮
@@ -63,6 +63,8 @@ class MainWindow(QMainWindow, Tcp, Tcp_Ui, Ui_MainWindow):
         self.custom_connect()
         # 设置状态栏
         self.init_statusbar()
+        # 设置当修改包数时同步修改chart的X轴范围
+        self.pack_num.valueChanged.connect(self.set_pack_num)
 
         self.recv_table.clicked.connect(self.set_table_voltage_data)
         self.recv_table.itemClicked.connect(self.if_show_in_chart)
@@ -92,7 +94,6 @@ class MainWindow(QMainWindow, Tcp, Tcp_Ui, Ui_MainWindow):
 
     def protocol_change(self):
         index = self.protocol_box.currentIndex()
-        print(index)
         if index == 0:  # TCP Server
             self.ip_label.setText('本地主机地址：')
             self.port_label.setText('本地主机端口号：')
@@ -128,9 +129,11 @@ class MainWindow(QMainWindow, Tcp, Tcp_Ui, Ui_MainWindow):
     def close_btn_setup(self):
         """
         断开按钮功能选择
+        断开所有连接
         :return:
         """
-        # TODO: 断开所有连接
+        self.close_port_button.setEnabled(False)
+        self.connect_button.setEnabled(True)
         self.close_socket()
 
     def close_connection_btn_setup(self):
@@ -253,6 +256,11 @@ class MainWindow(QMainWindow, Tcp, Tcp_Ui, Ui_MainWindow):
             self.recv_data_chartview.show()
         else:
             self.recv_data_chartview.hide()
+
+    # 设置当修改包数时，同步修改chart X轴范围
+    def set_pack_num(self):
+        self.axisX.setRange(0, int(self.pack_num.text()) * 160)
+        print("X轴范围同步修改")
 
     def closeEvent(self, event):
         """

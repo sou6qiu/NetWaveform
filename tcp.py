@@ -13,6 +13,7 @@ from tcp_ui import Tcp_Ui
 
 class Tcp(Tcp_Ui, Ui_MainWindow):
     def __init__(self):
+        self.local_pack_num = 0
         print('TCP is running...')
         super().__init__()
         self.buf_size = 5000  # 一次发送的内容最大大小
@@ -132,6 +133,8 @@ class Tcp(Tcp_Ui, Ui_MainWindow):
         使用子线程用于创建连接，使每个tcp client可以单独地与server通信
         :return:None
         """
+        # local_pack_num 为当前接收到的包的数量，每到 self.pack_num 时清零
+        self.local_pack_num = 0
         # 这里的show_client_info标志位的作用：仅在收到客户端发送的第一次消息前面加上客户端的ip，port信息
         show_client_info = True
         # 将连接到本服务器的客户端信息显示在客户端列表下拉框中
@@ -154,10 +157,8 @@ class Tcp(Tcp_Ui, Ui_MainWindow):
                 """
                 print('Error:', con_reset)
                 client_socket.close()
-                print(self.client_socket_list)
                 # 将当前客户端的连接从socket列表中删除
                 self.client_socket_list.remove((client_socket, client_addr))
-                print(self.client_socket_list)
                 # 判断socket列表是否已经清空，如果清空，那么self.link置为空
                 if self.client_socket_list:
                     pass
@@ -175,23 +176,21 @@ class Tcp(Tcp_Ui, Ui_MainWindow):
                    """
                 break
             else:
-                print(recv_msg)
+                self.local_pack_num += 1
                 if recv_msg:
                     # 16进制显示功能检测
                     if self.recv_hex_radio.isChecked():
                         msg = binascii.b2a_hex(recv_msg).decode('utf-8')
                         # 例子：str(binascii.b2a_hex(b'\x01\x0212'))[2:-1] == >
                         # 01023132
-                        print(msg, type(msg), len(msg))  # msg为 str 类型
+                        print(f"package num: {self.local_pack_num}", msg, type(msg), len(msg))  # msg为 str 类型
                         # 将解码后的16进制数据按照两个字符+'空字符'发送到接收框中显示
                         msg = self.hex_show(msg)
+                        # if len(msg.split(' ')) <= 8:
+
                         # 解析16进制数据，换算成电压值
-                        self.voltage = self.hex_data_to_voltage(msg,
-                                                                voltage_reference=int(self.voltage_reference.text()))
-                        # 每接收到新的数据都会将更新后的电压值可视化在chart上
-                        self.update_chart_data()
-                        # 每接收到新的数据都会将更新表格中的电压值
-                        self.set_table_voltage_data()
+                        tmp_voltage = self.hex_data_to_voltage(msg,
+                                                               voltage_reference=int(self.voltage_reference.text()))
                         if show_client_info is True:
                             # 将接收到的消息发送到接收框中进行显示，附带客户端信息
                             msg = f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}] ' \
@@ -199,11 +198,30 @@ class Tcp(Tcp_Ui, Ui_MainWindow):
                             self.signal_write_msg.emit(msg)
                         else:
                             self.signal_write_msg.emit(msg)
+                        # 累加收到的数据
+                        if self.voltage:
+                            for i, v in enumerate(self.voltage):
+                                v.extend(tmp_voltage[i])
+                        else:
+                            self.voltage = tmp_voltage
+                        # 当接收到self.pack_num个数据时，才会将更新后的电压值可视化在chart上
+                        if self.local_pack_num == int(self.pack_num.text()):
+                            self.update_chart_data()
+                            # 更新表格中的电压值
+                            self.set_table_voltage_data()
+                            # local_pack_num 清零
+                            self.local_pack_num = 0
+                            # 清空接收区屏幕
+                            # 不能在子线程中去操作主线程的GUI界面，不然会导致程序崩溃，这里通过信号传递清空功能
+                            # self.recv_data_text.clear()
+                            self.signal_clear_recv.emit('清空接收区屏幕')
+                            # self.voltage 置零
+                            self.voltage = None
+
                     else:
                         try:
                             # 尝试对接收到的数据解码，如果解码成功，即使解码后的数据是ascii可显示字符也直接发送，
                             msg = recv_msg.decode('utf-8')
-                            print(msg)
                             if show_client_info is True:
                                 msg = f'[{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}] ' \
                                       f'RECV FROM {client_addr[0]}:{client_addr[1]}\n' + msg
@@ -278,11 +296,10 @@ class Tcp(Tcp_Ui, Ui_MainWindow):
         self.ch6.clear()
         self.ch7.clear()
         self.ch8.clear()
-        count = 0
-        print('voltage: ', self.voltage)
+        print('voltage len: ', len(self.voltage))
+        print('voltage[0] len: ', len(self.voltage[0]))
         for i, data in enumerate(self.voltage[0]):
             self.ch1.append(i, data)
-            count += 1
         for i, data in enumerate(self.voltage[1]):
             self.ch2.append(i, data)
         for i, data in enumerate(self.voltage[2]):
@@ -298,25 +315,20 @@ class Tcp(Tcp_Ui, Ui_MainWindow):
         for i, data in enumerate(self.voltage[7]):
             self.ch8.append(i, data)
 
-        print('ch1: ', self.ch1.points())
-        print('ch2: ', self.ch2.points())
-        print('ch3: ', self.ch3.points())
-        print('ch8: ', self.ch8.points())
-        print(count)
-
     # 设置表格中的电压值
     def set_table_voltage_data(self):
         max_data = []
-        for i in self.voltage:
-            max_data.append(max(i))
-        self.recv_table.item(0, 1).setText(str(round(max_data[0], 2)))
-        self.recv_table.item(1, 1).setText(str(round(max_data[1], 2)))
-        self.recv_table.item(2, 1).setText(str(round(max_data[2], 2)))
-        self.recv_table.item(3, 1).setText(str(round(max_data[3], 2)))
-        self.recv_table.item(4, 1).setText(str(round(max_data[4], 2)))
-        self.recv_table.item(5, 1).setText(str(round(max_data[5], 2)))
-        self.recv_table.item(6, 1).setText(str(round(max_data[6], 2)))
-        self.recv_table.item(7, 1).setText(str(round(max_data[7], 2)))
+        if self.voltage:
+            for i in self.voltage:
+                max_data.append(max(i))
+            self.recv_table.item(0, 1).setText(str(round(max_data[0], 2)))
+            self.recv_table.item(1, 1).setText(str(round(max_data[1], 2)))
+            self.recv_table.item(2, 1).setText(str(round(max_data[2], 2)))
+            self.recv_table.item(3, 1).setText(str(round(max_data[3], 2)))
+            self.recv_table.item(4, 1).setText(str(round(max_data[4], 2)))
+            self.recv_table.item(5, 1).setText(str(round(max_data[5], 2)))
+            self.recv_table.item(6, 1).setText(str(round(max_data[6], 2)))
+            self.recv_table.item(7, 1).setText(str(round(max_data[7], 2)))
 
     # 是否在chart中显示数据
     def if_show_in_chart(self):
